@@ -12,7 +12,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # with HIP, Thrust is rocThrust (found in HPX_SetupHIP)
 set(thrust_dependencies)
-if(HPX_WITH_HIP)
+set(thrust_include_directories)
+if(HPX_HIP_LANGUAGE STREQUAL "HIP")
+  # roc::rocthrust links hip::device, whose flags make the C++ compiler compile
+  # HIP: use only the headers of rocThrust and rocPRIM
+  set(thrust_include_directories
+      $<TARGET_PROPERTY:roc::rocthrust,INTERFACE_INCLUDE_DIRECTORIES>
+      $<TARGET_PROPERTY:roc::rocprim,INTERFACE_INCLUDE_DIRECTORIES>
+  )
+elseif(HPX_WITH_HIP)
   set(thrust_dependencies roc::rocthrust)
 endif()
 
@@ -49,6 +57,7 @@ add_hpx_module(
   EXCLUDE_FROM_GLOBAL_HEADER "hpx/thrust/thrust_headers.hpp"
   COMPAT_HEADERS ${thrust_compat_headers}
   DEPENDENCIES ${thrust_dependencies}
+  INCLUDE_DIRECTORIES ${thrust_include_directories}
   MODULE_DEPENDENCIES
     hpx_algorithms
     hpx_async_cuda

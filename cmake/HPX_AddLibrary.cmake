@@ -228,7 +228,9 @@ function(add_hpx_library name)
     foreach(source ${${name}_SOURCES})
       get_filename_component(extension ${source} EXT)
       if(${extension} STREQUAL ".cu")
-        set_source_files_properties(${source} PROPERTIES LANGUAGE CXX)
+        set_source_files_properties(
+          ${source} PROPERTIES LANGUAGE ${HPX_HIP_LANGUAGE}
+        )
       endif()
     endforeach()
   endif()

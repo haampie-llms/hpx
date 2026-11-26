@@ -620,7 +620,7 @@ hpx_option(
 # HPX CUDA configuration
 # ##############################################################################
 set(CUDA_OPTION_STRING "Enable support for CUDA (default: OFF)")
-set(HIP_OPTION_STRING "Enable compilation with HIPCC (default: OFF)")
+set(HIP_OPTION_STRING "Enable support for HIP (default: OFF)")
 hpx_option(HPX_WITH_CUDA BOOL "${CUDA_OPTION_STRING}" OFF ADVANCED)
 
 # No need for the user to specify the option explicitly

@@ -4,6 +4,34 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+# hipcc compiles HIP sources as C++, with other C++ compilers they use the HIP
+# language
+if(HPX_WITH_HIP AND NOT CMAKE_CXX_COMPILER MATCHES "hipcc$")
+  set(HPX_HIP_LANGUAGE HIP)
+
+  if(NOT DEFINED CMAKE_HIP_STANDARD)
+    set(CMAKE_HIP_STANDARD ${HPX_CXX_STANDARD})
+  elseif(CMAKE_HIP_STANDARD LESS 20)
+    hpx_error(
+      "You've set CMAKE_HIP_STANDARD to ${CMAKE_HIP_STANDARD}, which is less than 20 (the minimum required by HPX)"
+    )
+  endif()
+  set(CMAKE_HIP_STANDARD_REQUIRED ON)
+  set(CMAKE_HIP_EXTENSIONS OFF)
+
+  enable_language(HIP)
+
+  # the HIP runtime for the sources compiled by the C++ compiler
+  include(HPX_HIPPrefixPath)
+  hpx_add_hip_prefix_path()
+  find_package(hip REQUIRED CONFIG)
+  if(NOT HPX_FIND_PACKAGE)
+    target_link_libraries(hpx_base_libraries INTERFACE hip::host)
+  endif()
+else()
+  set(HPX_HIP_LANGUAGE CXX)
+endif()
+
 if(HPX_WITH_HIP AND NOT TARGET roc::hipblas)
 
   if(HPX_WITH_CUDA)

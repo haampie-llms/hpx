@@ -28,9 +28,12 @@ set(thrust_serialization_SOURCES thrust_serialization_archives.cpp)
 
 # the tests include thrust headers directly: with modules built as static
 # libraries, hpx_core links hpx_thrust privately and doesn't forward the include
-# directories of rocThrust
+# directories of rocThrust (with the HIP language they are the module's own)
 set(thrust_test_dependencies)
-if(HPX_WITH_HIP AND TARGET roc::rocthrust)
+if(HPX_WITH_HIP
+   AND NOT HPX_HIP_LANGUAGE STREQUAL "HIP"
+   AND TARGET roc::rocthrust
+)
   set(thrust_test_dependencies roc::rocthrust)
 endif()
 
